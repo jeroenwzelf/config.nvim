@@ -19,6 +19,16 @@ vim.opt.showmode = false
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 vim.opt.clipboard = 'unnamedplus'
+-- Sync system clipboard via wsl when doing a yank (use ctrl+c or yy in neovim and be able to paste this in Windows). See https://www.reddit.com/r/neovim/comments/vxdjyb/comment/iknh207/
+-- To paste something in neovim from the system clipboard, just use ctrl+v.
+if vim.fn.has 'wsl' == 1 then
+  vim.api.nvim_create_autocmd('TextYankPost', {
+    group = vim.api.nvim_create_augroup('Yank', { clear = true }),
+    callback = function()
+      vim.fn.system('clip.exe', vim.fn.getreg '"')
+    end,
+  })
+end
 
 -- Enable break indent
 vim.opt.breakindent = true
